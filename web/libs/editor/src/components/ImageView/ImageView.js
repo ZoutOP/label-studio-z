@@ -912,6 +912,11 @@ export default observer(
       // TODO fix me
       if (!store.task || !item.currentSrc) return null;
 
+      // CONVERT TO LOCALHOST.
+      const ipStartIndex = item.currentSrc.indexOf('://') + 3;
+      const ipEndIndex = item.currentSrc.substring(ipStartIndex).indexOf(':');
+      const localhostSrc = item.currentSrc.substring(0, ipStartIndex) + 'localhost' + item.currentSrc.substring(ipEndIndex + ipStartIndex);
+
       const containerStyle = {};
 
       const containerClassName = styles.container;

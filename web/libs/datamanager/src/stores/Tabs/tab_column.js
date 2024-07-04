@@ -223,6 +223,7 @@ export const TabColumn = types
     },
 
     setType(type) {
+      console.log('CHANGING TYPE: ', type);
       self.parentView.setColumnDisplayType(self.id, type);
       self.parentView.save();
     },
