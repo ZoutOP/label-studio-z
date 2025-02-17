@@ -21,7 +21,7 @@ windows_dll_fix()
 
 from django.core.management import call_command
 from django.core.wsgi import get_wsgi_application
-from django.db import DEFAULT_DB_ALIAS, IntegrityError, connections
+from django.db import connections, DEFAULT_DB_ALIAS, IntegrityError
 from django.db.backends.signals import connection_created
 from django.db.migrations.executor import MigrationExecutor
 
