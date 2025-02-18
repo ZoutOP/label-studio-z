@@ -65,6 +65,8 @@ Because of the `perRegion="true"` argument, each choice applies to a different s
 
 {% insertmd includes/nested-classification.md %}
 
+<!-- md nested-classification.md -->
+
 ## Related tags
 
 - [Labels](/tags/labels.html)

@@ -304,6 +304,7 @@ const RegionsMixin = types
           }, timeout);
         }
       },
+
     };
   });
 

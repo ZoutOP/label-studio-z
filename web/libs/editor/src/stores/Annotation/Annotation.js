@@ -129,6 +129,7 @@ const _Annotation = types
 
     // created by user during this session
     userGenerate: types.optional(types.boolean, true),
+    update: types.optional(types.boolean, false),
     sentUserGenerate: types.optional(types.boolean, false),
     localUpdate: types.optional(types.boolean, false),
 
@@ -266,7 +267,7 @@ const _Annotation = types
 
       const selectedResults = [];
 
-      self.areas.forEach((a) => {
+      self.areas.forEach(a => {
         if (!a.inSelection) return;
         a.results.forEach((r) => {
           selectedResults.push(r);
@@ -960,6 +961,7 @@ const _Annotation = types
         results: [result],
       };
 
+
       // TODO: MST is crashing if we don't validate areas?, this problem isn't
       // happening locally. So to reproduce you have to test in production or environment
       const area = self?.areas?.put(areaRaw);
@@ -1411,7 +1413,6 @@ const _Annotation = types
           }
         }
       }
-
       self.areas.set(itemId, {
         ...item.toJSON(),
         id: itemId,
@@ -1420,10 +1421,14 @@ const _Annotation = types
       const area = self.areas.get(itemId);
       const activeStates = area.object.activeStates();
 
-      activeStates.forEach((state) => {
+      activeStates.forEach(state => {
+        if (state.smart && state.toolNames.includes('KeyPoint')) {
+          return;   // Ignore smart keypoint.
+        }
         area.setValue(state);
       });
       self.suggestions.delete(id);
+
     },
 
     rejectSuggestion(id) {

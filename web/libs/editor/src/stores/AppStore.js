@@ -144,6 +144,11 @@ export default types
     _autoAnnotation: false,
 
     /**
+     * Enable the tooltip to accept or decline auto enabling of the tool tip.
+     */
+    _autoAnnotationTooltipActive: true,
+
+    /**
      * Auto accept suggested annotations
      */
     _autoAcceptSuggestions: false,
@@ -184,6 +189,7 @@ export default types
           ? [currentUser, ...sn.users.filter(({ id }) => id !== currentUser.id)]
           : [currentUser];
       }
+
     }
     // fix for old version of custom buttons which were just an array
     // @todo remove after a short time
@@ -194,6 +200,7 @@ export default types
       ...sn,
       _autoAnnotation: localStorage.getItem("autoAnnotation") === "true",
       _autoAcceptSuggestions: localStorage.getItem("autoAcceptSuggestions") === "true",
+      _autoAnnotationTooltipActive: localStorage.getItem('autoAnnotationTooltipActive') === 'true',
     };
   })
   .volatile(() => ({
@@ -240,6 +247,10 @@ export default types
     get forceAutoAcceptSuggestions() {
       return getEnv(self).forceAutoAcceptSuggestions;
     },
+    get autoAnnotationTooltipActive() {
+      return self._autoAnnotationTooltipActive;
+    },
+
     get autoAnnotation() {
       return self.forceAutoAnnotation || self._autoAnnotation;
     },
@@ -887,6 +898,11 @@ export default types
       localStorage.setItem("autoAnnotation", value);
     };
 
+    const setAutoAnnotationTooltipActive = (value) => {
+      self._autoAnnotationTooltipActive = value;
+      localStorage.setItem('autoAnnotationTooltipActive', value);
+    };
+
     const setAutoAcceptSuggestions = (value) => {
       self._autoAcceptSuggestions = value;
       localStorage.setItem("autoAcceptSuggestions", value);
@@ -1010,6 +1026,7 @@ export default types
       toggleDescription,
 
       setAutoAnnotation,
+      setAutoAnnotationTooltipActive,
       setAutoAcceptSuggestions,
       loadSuggestions,
 
