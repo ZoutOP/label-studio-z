@@ -36,14 +36,14 @@ export default {
     onChangeEvent: "toggleShowLabels",
     defaultValue: false,
   },
-  'enableRegionBoxes': {
-    'newUI': {
-      'title': 'Enable or disable visual boxes for regions',
-      'description': 'Toggle the visual bounding boxes for the regions'
+  enableRegionBoxes: {
+    newUI: {
+      title: 'Enable or disable visual boxes for regions',
+      description: 'Toggle the visual bounding boxes for the regions'
     },
-    'description': 'Enable or disable visual boxes for regions',
-    'onChangeEvent': 'toggleRegionBoxes',
-    'defaultValue': false
+    description: 'Enable or disable visual boxes for regions',
+    onChangeEvent: 'toggleRegionBoxes',
+    defaultValue: false
   },
   continuousLabeling: {
     newUI: {

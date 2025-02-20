@@ -80,6 +80,19 @@ const SmartTools = observer(({ tools }) => {
 
   const hasSelected = tools.some((t) => t.selected);
 
+  const autoAnnotations = useMemo(() => {
+    const annotation = tools.find(t => t.annotation)?.annotation;
+    const hasSuggestions = annotation?.suggestions?.size >= 0;
+    return {
+      accept: () => {
+        if (hasSuggestions) annotation.acceptAllSuggestions();
+      },
+      reject: () => {
+        if (hasSuggestions) annotation.rejectAllSuggestions();
+      }
+    }
+  }, [tools]);
+
   return (
     tools.length > 0 && (
       <Elem name="group">
@@ -113,6 +126,12 @@ const SmartTools = observer(({ tools }) => {
           }
           controls={selected.controls}
           onClick={(e) => {
+            if (!hasSelected) {
+              const tool = tools[selectedIndex];
+              tool.manager.selectTool(tool, true);
+              return;  // Reset current tool.
+            }
+
             let nextIndex = selectedIndex + 1;
 
             // if that's a smart button in extra block, it's already selected
@@ -126,6 +145,11 @@ const SmartTools = observer(({ tools }) => {
 
             setSelectedIndex(nextIndex);
             nextTool.manager.selectTool(nextTool, true);
+          }}
+
+          extraShortcuts={{
+            'y' : ['Accept Auto Annotations', autoAnnotations.accept],
+            'n' : ['Reject Auto Annotations', autoAnnotations.reject],
           }}
         />
       </Elem>

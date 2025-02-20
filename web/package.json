@@ -93,6 +93,7 @@
     "strman": "^2.0.1",
     "wavesurfer.js": "^6.0.1",
     "xpath-range": "^1.1.1",
+    "yarn": "^1.22.22",
     "zod": "^3.22.4"
   },
   "devDependencies": {
