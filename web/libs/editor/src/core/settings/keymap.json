@@ -89,6 +89,10 @@
     "mac": "ctrl+h",
     "description": "Toggle all regions visibility"
   },
+  "region:visibility-all-hold": {
+    "key": "space",
+    "description": "Temporarily hides all layers."
+  },
   "region:lock": {
     "key": "alt+l",
     "description": "Lock selected region"

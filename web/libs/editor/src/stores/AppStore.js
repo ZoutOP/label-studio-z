@@ -154,6 +154,11 @@ export default types
     _autoAcceptSuggestions: false,
 
     /**
+     * Visibility active state.
+     */
+    _regionVisibilityActive: false,
+
+    /**
      * Indicator for suggestions awaiting
      */
     awaitingSuggestions: false,
@@ -344,6 +349,30 @@ export default types
       getEnv(self).events.invoke("labelStudioLoad", self);
     }
 
+    function regionVisibilityActiveHandler(e) {
+      if (self._regionVisibilityActive) {
+        const { selected } = self.annotationStore;
+  
+        if (e.keyCode !== 32) return;
+        if (selected.regionStore.isAllHidden) {
+          selected.regionStore.toggleVisibility();
+        }
+      }
+
+      window.removeEventListener('keyup', self.regionVisibilityActiveHandler, true);
+      self._regionVisibilityActive = false;
+    }
+
+    function regionVisibilityActiveSetup() {
+        if (self._regionVisibilityActive) return;
+        const { selected } = self.annotationStore;
+        if (selected.regionStore.isAllHidden) return;  // Already hidden.
+        selected.regionStore.toggleVisibility();
+
+        self._regionVisibilityActive = true;
+        window.addEventListener('keyup', self.regionVisibilityActiveHandler, true);
+    }
+
     function attachHotkeys() {
       // Unbind previous keys in case LS was re-initialized
       hotkeys.unbindAll();
@@ -453,6 +482,10 @@ export default types
       hotkeys.addNamed("region:visibility-all", () => {
         const { selected } = self.annotationStore;
         selected.regionStore.toggleVisibility();
+      });
+
+      hotkeys.addNamed("region:visibility-all-hold", (e) => {
+        self.regionVisibilityActiveSetup();
       });
 
       hotkeys.addNamed("annotation:undo", () => {
@@ -1004,6 +1037,9 @@ export default types
       initializeStore,
       setHistory,
       attachHotkeys,
+
+      regionVisibilityActiveSetup,
+      regionVisibilityActiveHandler,
 
       skipTask,
       unskipTask,

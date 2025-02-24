@@ -14817,7 +14817,7 @@ if (!(0,_utils_feature_flags__WEBPACK_IMPORTED_MODULE_9__.isFF)(_utils_feature_f
 const DEFAULT_ACTIVE = Object.keys(Settings)[0];
 const DEFAULT_MODAL_SETTINGS = (0,_utils_feature_flags__WEBPACK_IMPORTED_MODULE_9__.isFF)(_utils_feature_flags__WEBPACK_IMPORTED_MODULE_9__.FF_DEV_3873) ? {
   name: "settings-modal",
-  title: "Labeling Interface Settings",
+  title: "Labeling Interface Settings!",
   closeIcon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_assets_icons__WEBPACK_IMPORTED_MODULE_8__.LsClose, {})
 } : {
   name: "settings-modal-old",
@@ -53279,7 +53279,7 @@ __webpack_require__.r(__webpack_exports__);
 // Get environment settings
 const getEnvironment = async () => {
   /* istanbul ignore next */
-  if ( true && !({"NX_CLI_SET":"true","NX_LOAD_DOT_ENV_FILES":"true","NX_WORKSPACE_ROOT":"/local/kla129/label-studio-z/web","NX_TERMINAL_OUTPUT_PATH":"/local/kla129/label-studio-z/web/.nx/cache/terminalOutputs/16020408910474640931","NX_STREAM_OUTPUT":"true","NX_TASK_TARGET_PROJECT":"editor","NX_TASK_TARGET_TARGET":"build","NX_TASK_TARGET_CONFIGURATION":"development","NX_TASK_HASH":"16020408910474640931"}).BUILD_NO_SERVER) {
+  if ( true && !({"NX_CLI_SET":"true","NX_LOAD_DOT_ENV_FILES":"true","NX_WORKSPACE_ROOT":"/local/kla129/label-studio-z/web","NX_TERMINAL_OUTPUT_PATH":"/local/kla129/label-studio-z/web/.nx/cache/terminalOutputs/10078602511711521576","NX_STREAM_OUTPUT":"true","NX_TASK_TARGET_PROJECT":"editor","NX_TASK_TARGET_TARGET":"build","NX_TASK_TARGET_CONFIGURATION":"development","NX_TASK_HASH":"10078602511711521576"}).BUILD_NO_SERVER) {
     return (await __webpack_require__.e(/* import() */ "src_env_development_js").then(__webpack_require__.bind(__webpack_require__, "./src/env/development.js"))).default;
   }
   return (await __webpack_require__.e(/* import() */ "src_env_production_js").then(__webpack_require__.bind(__webpack_require__, "./src/env/production.js"))).default;
@@ -54151,14 +54151,14 @@ __webpack_require__.r(__webpack_exports__);
     onChangeEvent: "toggleShowLabels",
     defaultValue: false
   },
-  'enableRegionBoxes': {
-    'newUI': {
-      'title': 'Enable or disable visual boxes for regions',
-      'description': 'Toggle the visual bounding boxes for the regions'
+  enableRegionBoxes: {
+    newUI: {
+      title: 'Enable or disable visual boxes for regions',
+      description: 'Toggle the visual bounding boxes for the regions'
     },
-    'description': 'Enable or disable visual boxes for regions',
-    'onChangeEvent': 'toggleRegionBoxes',
-    'defaultValue': false
+    description: 'Enable or disable visual boxes for regions',
+    onChangeEvent: 'toggleRegionBoxes',
+    defaultValue: false
   },
   continuousLabeling: {
     newUI: {
@@ -83692,7 +83692,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"ff_front_1170_outliner_030222_short"
 /***/ ((module) => {
 
 "use strict";
-module.exports = /*#__PURE__*/JSON.parse('{"audio:back":{"key":"ctrl+b","mac":"command+b","description":"Back for one second"},"audio:playpause":{"key":"ctrl+p","mac":"command+p","description":"Play/pause"},"ts:grow-left":{"key":"left","description":"Increase region to the left"},"ts:grow-right":{"key":"right","description":"Increase region to the right"},"ts:shrink-left":{"key":"alt+left","description":"Decrease region on the left"},"ts:shrink-right":{"key":"alt+right","description":"Decrease region on the right"},"ts:grow-left-largre":{"key":"shift+left"},"ts:grow-right-largre":{"key":"shift+right"},"ts:shrink-left-largre":{"key":"shift+alt+left"},"ts:shrink-right-largre":{"key":"shift+alt+right"},"annotation:submit":{"key":"ctrl+enter","mac":"command+enter","description":"Submit annotation"},"annotation:skip":{"key":"ctrl+space","mac":"alt+enter","description":"Skip task"},"annotation:undo":{"key":"ctrl+z","mac":"command+z","description":"Undo"},"annotation:redo":{"key":"ctrl+shift+z","mac":"command+shift+z","description":"Redo"},"polygon:undo":{"key":"ctrl+z","mac":"command+z","description":"Undo"},"polygon:redo":{"key":"ctrl+shift+z","mac":"command+shift+z","description":"Redo"},"region:delete-all":{"key":"ctrl+backspace","mac":"command+backspace","description":"Delete all regions"},"region:focus":{"key":"enter","description":"Focus first focusable region"},"region:relation":{"key":"alt+r","description":"Create relation between regions"},"region:visibility":{"key":"alt+h","description":"Toggle selected region visibility"},"region:visibility-all":{"key":"ctrl+h","mac":"ctrl+h","description":"Toggle all regions visibility"},"region:lock":{"key":"alt+l","description":"Lock selected region"},"region:meta":{"key":"alt+m","description":"Edit selected region meta"},"region:unselect":{"key":"u","description":"Unselect region"},"region:exit":{"key":"escape","description":"Exit relation mode, unselect region"},"region:delete":{"key":"backspace","description":"Delete selected region"},"region:cycle":{"key":"alt+.","description":"Cycle through regions"},"region:duplicate":{"key":"ctrl+d","mac":"command+d","description":"Duplicate selected region"},"segment:delete":{"key":"delete","description":"Delete selected region"},"media:playpause":{"key":"ctrl+alt+space","mac":"control+space","description":"Play/pause"},"media:step-backward":{"key":"alt+left","description":"Go one step back"},"media:step-forward":{"key":"alt+right","description":"Go one step forward"},"video:keyframe-backward":{"key":"ctrl+alt+left","description":"Go to previous keyframe"},"video:keyframe-forward":{"key":"ctrl+alt+right","description":"Go to next keyframe"},"video:backward":{"key":"alt+left","description":"Go back"},"video:rewind":{"key":"shift+ctrl+alt+left","description":"Go to first frame"},"video:forward":{"key":"shift+alt+right","description":"Go forward"},"video:fastforward":{"key":"shift+ctrl+alt+right","description":"Go to last frame"},"video:hop-backward":{"key":"shift+alt+left","description":"Hop Backward"},"video:hop-forward":{"key":"shift+alt+right","description":"Hop Forward"},"repeater:next-page":{"key":"alt+right","description":"Next Page"},"repeater:previous-page":{"key":"alt+left","description":"Previous Page"},"image:prev":{"key":"ctrl+left","mac":"command+left","description":"Previous Image"},"image:next":{"key":"ctrl+right","mac":"command+right","description":"Next Image"}}');
+module.exports = /*#__PURE__*/JSON.parse('{"audio:back":{"key":"ctrl+b","mac":"command+b","description":"Back for one second"},"audio:playpause":{"key":"ctrl+p","mac":"command+p","description":"Play/pause"},"ts:grow-left":{"key":"left","description":"Increase region to the left"},"ts:grow-right":{"key":"right","description":"Increase region to the right"},"ts:shrink-left":{"key":"alt+left","description":"Decrease region on the left"},"ts:shrink-right":{"key":"alt+right","description":"Decrease region on the right"},"ts:grow-left-largre":{"key":"shift+left"},"ts:grow-right-largre":{"key":"shift+right"},"ts:shrink-left-largre":{"key":"shift+alt+left"},"ts:shrink-right-largre":{"key":"shift+alt+right"},"annotation:submit":{"key":"ctrl+enter","mac":"command+enter","description":"Submit annotation"},"annotation:skip":{"key":"ctrl+space","mac":"alt+enter","description":"Skip task"},"annotation:undo":{"key":"ctrl+z","mac":"command+z","description":"Undo"},"annotation:redo":{"key":"ctrl+shift+z","mac":"command+shift+z","description":"Redo"},"polygon:undo":{"key":"ctrl+z","mac":"command+z","description":"Undo"},"polygon:redo":{"key":"ctrl+shift+z","mac":"command+shift+z","description":"Redo"},"region:delete-all":{"key":"ctrl+backspace","mac":"command+backspace","description":"Delete all regions"},"region:focus":{"key":"enter","description":"Focus first focusable region"},"region:relation":{"key":"alt+r","description":"Create relation between regions"},"region:visibility":{"key":"space","description":"Toggle selected region visibility"},"region:visibility-all":{"key":"ctrl+h","mac":"ctrl+h","description":"Toggle all regions visibility"},"region:lock":{"key":"alt+l","description":"Lock selected region"},"region:meta":{"key":"alt+m","description":"Edit selected region meta"},"region:unselect":{"key":"u","description":"Unselect region"},"region:exit":{"key":"escape","description":"Exit relation mode, unselect region"},"region:delete":{"key":"backspace","description":"Delete selected region"},"region:cycle":{"key":"alt+.","description":"Cycle through regions"},"region:duplicate":{"key":"ctrl+d","mac":"command+d","description":"Duplicate selected region"},"segment:delete":{"key":"delete","description":"Delete selected region"},"media:playpause":{"key":"ctrl+alt+space","mac":"control+space","description":"Play/pause"},"media:step-backward":{"key":"alt+left","description":"Go one step back"},"media:step-forward":{"key":"alt+right","description":"Go one step forward"},"video:keyframe-backward":{"key":"ctrl+alt+left","description":"Go to previous keyframe"},"video:keyframe-forward":{"key":"ctrl+alt+right","description":"Go to next keyframe"},"video:backward":{"key":"alt+left","description":"Go back"},"video:rewind":{"key":"shift+ctrl+alt+left","description":"Go to first frame"},"video:forward":{"key":"shift+alt+right","description":"Go forward"},"video:fastforward":{"key":"shift+ctrl+alt+right","description":"Go to last frame"},"video:hop-backward":{"key":"shift+alt+left","description":"Hop Backward"},"video:hop-forward":{"key":"shift+alt+right","description":"Hop Forward"},"repeater:next-page":{"key":"alt+right","description":"Next Page"},"repeater:previous-page":{"key":"alt+left","description":"Previous Page"},"image:prev":{"key":"ctrl+left","mac":"command+left","description":"Previous Image"},"image:next":{"key":"ctrl+right","mac":"command+right","description":"Next Image"}}');
 
 /***/ })
 
