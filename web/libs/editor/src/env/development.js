@@ -4,6 +4,9 @@ import External from "../core/External";
 import Messages from "../utils/messages";
 import { ClassificationMixed } from "../examples/classification_mixed";
 
+
+import { ImageTools } from "../examples/image_tools";
+
 /**
  * Custom Data
  */

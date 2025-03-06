@@ -192,7 +192,8 @@ const Model = types
             bottom: Math.max(...points.y),
           };
         }
-        const imageBBox = Geometry.getImageDataBBox(self.imageData.data, self.imageData.width, self.imageData.height);
+        const imageBBox = self.imageData;
+        // const imageBBox = Geometry.getImageDataBBox(self.imageData.data, self.imageData.width, self.imageData.height);
 
         if (!imageBBox) return null;
         const {
@@ -262,14 +263,14 @@ const Model = types
         }
       },
 
-      cacheImageData() {
+      cacheImageData(optimisedImage) {
         if (!self.layerRef) {
           self.imageData = null;
         } else {
-          const canvas = self.layerRef.toCanvas();
-          const ctx = canvas.getContext("2d");
-
-          self.imageData = ctx.getImageData(0, 0, self.layerRef.canvas.width, self.layerRef.canvas.height);
+          self.imageData = {x: optimisedImage.x, y: optimisedImage.y, width: optimisedImage.width, height: optimisedImage.height};
+          //const canvas = self.layerRef.toCanvas();
+          //const ctx = canvas.getContext("2d");
+          //self.imageData = ctx.getImageData(0, 0, self.layerRef.canvas.width, self.layerRef.canvas.height);
         }
       },
 
@@ -513,7 +514,10 @@ const HtxBrushLayer = observer(({ item, setShapeRef, pointsList }) => {
 });
 
 const HtxBrushView = ({ item, setShapeRef }) => {
-  const [image, setImage] = useState();
+
+  const [originalImage, setOriginalImage] = useState({image: null, x: 0, y: 0, width: 0, height: 0, originalWidth: 0, originalheight: 0});
+  const [optimisedImage, setOptimisedImage] = useState({image: null, x: 0, y: 0});
+
   const { suggestion } = useContext(ImageViewContext) ?? {};
 
   // Prepare brush stroke from RLE with current stroke color
@@ -523,23 +527,31 @@ const HtxBrushView = ({ item, setShapeRef }) => {
     // - maskDataURL - an RGBA mask encoded as an image data URL that can be directly placed into
     //  an image without having to go through an RLE encode/decode loop to save performance for tools
     //  that dynamically produce image masks.
-
     if (!item.rle && !item.maskDataURL) return;
     if (!item.parent || item.parent.naturalWidth <= 1 || item.parent.naturalHeight <= 1) return;
 
-    let img;
+    let img, origImg;
 
     if (item.maskDataURL) {
       img = await Canvas.maskDataURL2Image(item.maskDataURL, { color: item.strokeColor });
+      origImg = Canvas.image2OptimisedImage(img);
     } else if (item.rle) {
-      img = Canvas.RLE2Region(item, { color: item.strokeColor });
+      //img = Canvas.RLE2Region(item, { color: item.strokeColor });
+      origImg = Canvas.RLE2OptimisedRegion(item, {color: item.strokeColor});
     }
-
-    if (img) {
-      img.onload = () => {
-        setImage(img);
+   if (origImg) {
+      origImg.image.onload = () => {
+        setOriginalImage(origImg);
+        Canvas.optimisedImageToMaskBitmap(
+          origImg,
+          item.parent.stageWidth,
+          item.parent.stageHeight
+        )
+          .then(optImg => {
+            setOptimisedImage(optImg);
+          })
         item.setReady(true);
-      };
+      }
     }
   }, [
     item.rle,
@@ -553,33 +565,21 @@ const HtxBrushView = ({ item, setShapeRef }) => {
     item.parent?.naturalHeight,
     item.strokeColor,
     item.opacity,
+    item.parent.stageWdith,
+    item.parent.stageHeight
   ]);
 
   // Drawing hit area by shape color to detect interactions inside the Konva
   const imageHitFunc = useMemo(() => {
 
-    const data = {image: null, initialised: false};
-
     return (context, shape) => {
       // Initialise the data image if not exists
-      if (image && !data.initialised) {
-        data.initialised = true;
-        Canvas.ImageToMaskBitmap(
-          image,
-          {width: item.parent.stageWidth, height: item.parent.stageHeight},
-          isFF(FF_ZOOM_OPTIM) ? item.parent.alignmentOffset : {x: 0, y: 0},
-          colorToRGBAArray(shape.colorKey)
-        )
-          .then(maskBitMap => {
-            data.image = maskBitMap;
-          })
-      }
-      // If data image exists draw it.
-      if (data.image) {
-        context.drawImage(data.image, 0,0, item.parent.stageWidth, item.parent.stageHeight);
+      if (optimisedImage.image) {
+        context.drawImage(optimisedImage.image, 0, 0, optimisedImage.image.width, optimisedImage.image.height, 
+          optimisedImage.x, optimisedImage.y, optimisedImage.image.width, optimisedImage.image.height);
       }
     };
-  }, [image, item.parent?.stageWidth, item.parent?.stageHeight]);
+  }, [optimisedImage, optimisedImage.image, optimisedImage.x, optimisedImage.y]);
 
   const { store } = item;
 
@@ -609,8 +609,7 @@ const HtxBrushView = ({ item, setShapeRef }) => {
       layer.draw();
 
       const dataUrl = layer.canvas.toDataURL();
-
-      item.cacheImageData();
+      item.cacheImageData(optimisedImage);
 
       if (highlighted) {
         highlightEl.show();
@@ -631,7 +630,7 @@ const HtxBrushView = ({ item, setShapeRef }) => {
     item.parent?.stageHeight,
     item.maskDataURL,
     item.rle,
-    image
+    optimisedImage
   ]);
 
   const setLayerRef = useCallback(
@@ -685,7 +684,7 @@ const HtxBrushView = ({ item, setShapeRef }) => {
     canvas.height = data.height;
 
     if (data.image) {
-      ctx.drawImage(data.image, 0, 0);
+      ctx.drawImage(data.image.image, 0, 0, data.image.width, data.image.height, data.image.x, data.image.y, data.image.width, data.image.height);
     }  // Draw image.
 
     data.touches.forEach(touch => {
@@ -747,7 +746,7 @@ const HtxBrushView = ({ item, setShapeRef }) => {
       item.parent?.naturalHeight || 0,
       item.parent?.stageZoom || 1.0,
       item.touches,
-      image
+      originalImage
     );
     const showBBox = item.annotation.selectionSize === 0;
     if (showBBox && info.updated) {
@@ -760,7 +759,7 @@ const HtxBrushView = ({ item, setShapeRef }) => {
     return {
       show: true, ...info.bbox
     }
-  }, [item.annotation.selectionSize, computeBBox, image, item.parent?.naturalWidth,
+  }, [item.annotation.selectionSize, computeBBox, originalImage, item.parent?.naturalWidth,
     item.parent?.naturalHeight, item.parent?.stageZoom, item.touches.length, item.touches,
     store?.settings.annotation.regionStore.showRegionBoundingBoxes]);
 
@@ -780,6 +779,7 @@ const HtxBrushView = ({ item, setShapeRef }) => {
       container.removeChild(hitCanvas);
     }
   }, [store?.settings.annotation.regionStore.showRegionHitBoxes]);
+
 
   return (
     <RegionWrapper item={item}>
@@ -849,7 +849,7 @@ const HtxBrushView = ({ item, setShapeRef }) => {
           listening={!suggestion}
         >
           {/* RLE */}
-          <Image image={image} hitFunc={imageHitFunc} width={item.parent.stageWidth} height={item.parent.stageHeight} />
+          <Image image={optimisedImage.image} hitFunc={imageHitFunc} x={optimisedImage.x} y={optimisedImage.y} width={optimisedImage.image?.width} height={optimisedImage.image?.height}/>
 
           {/* Touches */}
           <Group>

@@ -143,8 +143,7 @@ function setMaskPixelColors(ctx, data, nw, nh, color, numChannels) {
  * @param {string} color Fill color for the region that will be produced.
  * @returns {Image} DOM image filled in with RLE contents.
  */
-function RLE2Region(item, { color = Constants.FILL_COLOR } = {}) {
-  const { rle } = item;
+function RLE2Region(item, { color = Constants.FILL_COLOR } = {}) {  const { rle } = item;
   const nw = item.currentImageEntity.naturalWidth;
   const nh = item.currentImageEntity.naturalHeight;
 
@@ -175,6 +174,84 @@ function RLE2Region(item, { color = Constants.FILL_COLOR } = {}) {
 
   new_image.src = canvas.toDataURL();
   return new_image;
+
+}
+
+
+/**
+ * optimised to a snippet
+ * 
+ * Given the RLE array returns the DOM Image element with loaded image.
+ * @param {string} rle RLE encoded image to be turned into a Region object.
+ * @param {tags.object.Image} image Image the region will be interacting with.
+ * @param {string} color Fill color for the region that will be produced.
+ * @returns {{image: Image, x: number, y: number, width: number, height: number, originalWidth: number, originalHeight: number}} DOM image filled in with RLE contents.
+ */
+function RLE2OptimisedRegion(item, { color = Constants.FILL_COLOR }) {
+  const { rle } = item;
+
+  const originalWidth = item.currentImageEntity.naturalWidth;
+  const originalHeight = item.currentImageEntity.naturalHeight;
+
+  const decoded = decode(rle);
+
+  const bbox = {xMin: originalWidth, xMax: 0, yMin: originalHeight, yMax: 0};
+
+  let index, x, y;
+  for (let i = 0; i < decoded.length; i++) {
+  //for (let i = decoded.length / 4; i--;) {
+    index = i * 4;
+    if (decoded[index + 3]) {
+      y = Math.floor(i / originalWidth);
+      x = i - (y * originalWidth);
+      if (x < bbox.xMin) bbox.xMin = x;
+      if (x > bbox.xMax) bbox.xMax = x;
+      if (y < bbox.yMin) bbox.yMin = y;
+      if (y > bbox.yMax) bbox.yMax = y;
+    }
+  }
+
+  bbox.xMin = Math.max(0, bbox.xMin - 5);
+  bbox.xMax = Math.min(originalWidth, bbox.xMax + 5);
+  bbox.yMin = Math.max(0, bbox.yMin - 5);
+  bbox.yMax = Math.min(originalHeight, bbox.yMax + 5);
+
+  const width = bbox.xMax - bbox.xMin;
+  const height = bbox.yMax - bbox.yMin;
+
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
+  canvas.width = width;
+  canvas.height = height;
+
+  const rgb = chroma(color).rgb();
+
+  const heightOffset = (bbox.yMin * width);
+  const newData = ctx.createImageData(width, height);
+
+  index = 0;
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const decodeY = (y + bbox.yMin) * 4 * originalWidth;
+      const decodeX = (x + bbox.xMin) * 4;
+      const value = decoded[decodeY + decodeX + 3];
+      if (value) {
+        newData.data[index] = rgb[0];
+        newData.data[index + 1] = rgb[1];
+        newData.data[index + 2] = rgb[2];
+        newData.data[index + 3] = value;
+      }
+      index += 4;
+    }
+  }
+
+  //ctx.putImageData(boundedData, bbox.xMin, bbox.yMin);
+  ctx.putImageData(newData, 0, 0);
+  const newImage = new Image();
+
+  newImage.src = canvas.toDataURL();
+  return {image: newImage, x: bbox.xMin, y: bbox.yMin, width: width, height: height, originalWidth: originalWidth, originalHeight: originalHeight};
 }
 
 
@@ -208,6 +285,38 @@ function ImageToMaskBitmap(image, size, offset, maskColour) {
   }
 
   return createImageBitmap(imageData);
+}
+
+
+function optimisedImageToMaskBitmap(optimisedImage, width, height) {
+  if (optimisedImage.image == null) return new Promise((resolve, _reject) => resolve({image: null, x: 0, y: 0}));
+
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+
+  const widthScale = width / optimisedImage.originalWidth;
+  const heightScale = height / optimisedImage.originalHeight;
+
+  const newWidth = optimisedImage.width * widthScale;
+  const newHeight = optimisedImage.height * heightScale;
+
+  canvas.width = newWidth;
+  canvas.height = newHeight;
+  // Scales image.
+  ctx.drawImage(optimisedImage.image, 0, 0, newWidth, newHeight);
+
+  const imageData = ctx.getImageData(0, 0, newWidth, newHeight);
+
+  return new Promise((resolve, _reject) => {
+    createImageBitmap(imageData)
+      .then(bitmap => {
+        resolve({image: bitmap, x: optimisedImage.x * widthScale, y: optimisedImage.y * heightScale});
+      })
+  })
+}
+
+function image2OptimisedImage (image) {
+  throw Error('IMPLEMENT')
 }
 
 
@@ -676,7 +785,10 @@ function checkEndian() {
 export default {
   Region2RLE,
   RLE2Region,
+  RLE2OptimisedRegion,
   ImageToMaskBitmap,
+  optimisedImageToMaskBitmap,
+  image2OptimisedImage,
   mask2DataURL,
   maskDataURL2Image,
   brushSizeCircle,
